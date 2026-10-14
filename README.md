@@ -21,6 +21,8 @@ All numbers are produced by `python experiments.py` and written to [REPORT.md](R
 ---
 
 ## Contents
+> 📘 **New to ICA?** Read the illustrated beginner's guide: [docs/UNMIX_Beginners_Guide.pdf](docs/UNMIX_Beginners_Guide.pdf)
+
 1. [Quick start](#1-quick-start)
 2. [Live demo script (hackathon)](#2-live-demo-script-hackathon)
 3. [Project structure](#3-project-structure)

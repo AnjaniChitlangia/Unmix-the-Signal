@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UNMIX — A Beginner's Guide</title>
+<style>
+  @page { size: A4; margin: 18mm 17mm 20mm 17mm; }
+  @page :first { margin: 0; }
+  :root { --violet:#7c3aed; --violet-l:#ede9fe; --cyan:#0891b2; --cyan-l:#cffafe; --coral:#e11d48; --coral-l:#ffe4e6;
+          --amber:#b45309; --amber-l:#fef3c7; --lime:#4d7c0f; --lime-l:#ecfccb; --ink:#1f2330; --muted:#5b6275; --line:#e3e5ec; }
+  * { box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; color: var(--ink); font-size: 10.6pt; line-height: 1.55; margin: 0; }
+  h1, h2, h3 { font-family: "Segoe UI Semibold", "Segoe UI", Arial, sans-serif; line-height: 1.2; }
+  h1 { font-size: 22pt; margin: 0 0 4mm 0; color: #14121f; }
+  h1 .num { display:inline-block; background: linear-gradient(135deg, var(--violet), var(--cyan)); color:#fff; border-radius: 8px;
+            padding: 1px 10px; margin-right: 8px; font-size: 18pt; vertical-align: 2px; }
+  h2 { font-size: 13.5pt; margin: 6mm 0 2mm 0; color: var(--violet); }
+  h3 { font-size: 11.5pt; margin: 4mm 0 1.5mm 0; color: #14121f; }
+  p { margin: 0 0 2.6mm 0; }
+  ul, ol { margin: 0 0 3mm 0; padding-left: 6mm; }
+  li { margin-bottom: 1.2mm; }
+  code, .mono { font-family: Consolas, "Cascadia Mono", monospace; font-size: 9.4pt; background: #f3f4f8; padding: 0 4px; border-radius: 4px; }
+  .chapter { margin-top: 9mm; padding-top: 6mm; border-top: 2px solid #ede9fe; }
+  .chapter.newpage { page-break-before: always; margin-top: 0; padding-top: 0; border-top: 0; }
+  .kicker { break-after: avoid-page; } h1 { break-after: avoid-page; page-break-after: avoid; }
+  .chapter > p.lead { break-before: avoid-page; }
+  .kicker { font-family: Consolas, monospace; letter-spacing: .18em; text-transform: uppercase; font-size: 8pt; color: var(--cyan); margin-bottom: 1mm; }
+  .lead { font-size: 11.6pt; color: #343a4d; }
+
+  .box { border-radius: 10px; padding: 3.2mm 4.2mm; margin: 3mm 0 4mm 0; page-break-inside: avoid; }
+  .box .t { font-weight: 700; margin-bottom: 1mm; display:block; }
+  .analogy { background: var(--violet-l); border-left: 4px solid var(--violet); }
+  .analogy .t { color: var(--violet); }
+  .why { background: var(--cyan-l); border-left: 4px solid var(--cyan); }
+  .why .t { color: var(--cyan); }
+  .warn { background: var(--amber-l); border-left: 4px solid var(--amber); }
+  .warn .t { color: var(--amber); }
+  .ok { background: var(--lime-l); border-left: 4px solid var(--lime); }
+  .ok .t { color: var(--lime); }
+  .math { background: #14121f; color: #ddd6fe; font-family: Consolas, monospace; font-size: 9.6pt; border-radius: 10px;
+          padding: 3mm 4.5mm; margin: 2mm 0 4mm 0; white-space: pre-wrap; page-break-inside: avoid; }
+  .math .c { color: #67e8f9; }
+
+  figure { margin: 3mm 0 5mm 0; page-break-inside: avoid; text-align: center; }
+  figure img { max-width: 100%; max-height: 112mm; width: auto; height: auto; border-radius: 8px; border: 1px solid var(--line); }
+  figure.wide img { max-height: 80mm; }
+  h2, h3 { break-after: avoid-page; page-break-after: avoid; }
+  h2 + table, h2 + p, h3 + p { break-before: avoid-page; }
+  figcaption { font-size: 8.8pt; color: var(--muted); margin-top: 1.5mm; text-align: left; }
+  table { border-collapse: collapse; width: 100%; margin: 2mm 0 4mm 0; font-size: 9.6pt; page-break-inside: avoid; }
+  th { background: #14121f; color: #fff; text-align: left; padding: 2mm 2.5mm; font-weight: 600; }
+  td { padding: 1.8mm 2.5mm; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafd; }
+  .good { color: var(--lime); font-weight: 700; } .bad { color: var(--coral); font-weight: 700; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+  .steps { counter-reset: s; list-style: none; padding: 0; }
+  .steps > li { counter-increment: s; position: relative; padding-left: 10mm; margin-bottom: 2.6mm; page-break-inside: avoid; }
+  .steps > li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 7mm; height: 7mm; border-radius: 50%;
+                        background: var(--violet); color: #fff; font-weight: 700; text-align: center; line-height: 7mm; font-size: 9pt; }
+  .pill { display:inline-block; padding: 0 8px; border-radius: 999px; font-size: 8.6pt; font-weight: 600; }
+
+  /* cover */
+  .cover { height: 297mm; width: 210mm; padding: 26mm 20mm; color: #fff; position: relative; overflow: hidden;
+           background: radial-gradient(700px 400px at 15% 10%, rgba(167,139,250,.45), transparent 60%),
+                       radial-gradient(600px 400px at 95% 30%, rgba(34,211,238,.30), transparent 60%),
+                       radial-gradient(600px 500px at 50% 110%, rgba(251,113,133,.30), transparent 60%), #0d0f14; }
+  .cover .k { font-family: Consolas, monospace; letter-spacing: .3em; color: #67e8f9; font-size: 10pt; }
+  .cover h0 { display:block; font-size: 64pt; font-weight: 800; letter-spacing: .08em; margin-top: 8mm;
+              background: linear-gradient(90deg, #c4b5fd, #22d3ee 55%, #fb7185); -webkit-background-clip: text; color: transparent; }
+  .cover .sub { font-size: 20pt; margin-top: 2mm; color: #f1f2f6; }
+  .cover .tag { font-size: 12.5pt; color: #b8bdcc; margin-top: 6mm; max-width: 150mm; line-height: 1.6; }
+  .cover .eq { position: absolute; left: 20mm; right: 20mm; bottom: 70mm; height: 46mm; display: flex; align-items: flex-end; gap: 2.2mm; }
+  .cover .eq span { flex: 1; border-radius: 3px; background: linear-gradient(180deg, #22d3ee, #a78bfa); opacity: .9; }
+  .cover .eq span:nth-child(3n) { background: linear-gradient(180deg, #fb7185, #a78bfa); }
+  .cover .foot { position: absolute; left: 20mm; right: 20mm; bottom: 22mm; color: #b8bdcc; font-size: 10pt; border-top: 1px solid rgba(255,255,255,.18); padding-top: 5mm; display:flex; justify-content: space-between; }
+
+  .toc { columns: 2; column-gap: 10mm; padding: 0; list-style: none; }
+  .toc li { padding: 1.4mm 0; border-bottom: 1px dotted #ccd; break-inside: avoid; }
+  .toc b { color: var(--violet); display: inline-block; width: 8mm; }
+  .glossary dt { font-weight: 700; color: var(--violet); margin-top: 2mm; }
+  .glossary dd { margin: 0 0 1mm 0; }
+</style>
+</head>
+<body>
+
+<!-- ============================ COVER ============================ -->
+<section class="cover">
+  <div class="k">A BEGINNER'S GUIDE · UNMIX THE SIGNAL (ICA)</div>
+  <h0>UNMIX</h0>
+  <div class="sub">How we taught a computer to pull<br>voices out of a noisy room</div>
+  <div class="tag">What was built, how every piece works, and <b>why</b> each decision was made, explained
+    from zero. No prior knowledge of signal processing or linear algebra needed.</div>
+  <div class="eq">
+    <span style="height:30%"></span><span style="height:55%"></span><span style="height:80%"></span><span style="height:45%"></span><span style="height:95%"></span><span style="height:60%"></span><span style="height:35%"></span><span style="height:70%"></span><span style="height:100%"></span><span style="height:50%"></span><span style="height:25%"></span><span style="height:65%"></span><span style="height:85%"></span><span style="height:40%"></span><span style="height:75%"></span><span style="height:55%"></span><span style="height:30%"></span><span style="height:90%"></span><span style="height:60%"></span><span style="height:45%"></span><span style="height:70%"></span><span style="height:35%"></span><span style="height:80%"></span><span style="height:50%"></span><span style="height:20%"></span><span style="height:65%"></span><span style="height:95%"></span><span style="height:40%"></span>
+  </div>
+  <div class="foot"><span>Project repo: github.com/AnjaniChitlangia/Unmix-the-Signal</span><span>“Discover the signals hidden in sound.”</span></div>
+</section>
+
+<!-- ============================ TOC ============================ -->
+<section class="chapter newpage">
+  <div class="kicker">Contents</div>
+  <h1>What's inside</h1>
+  <ul class="toc">
+    <li><b>1</b> The problem in one picture</li>
+    <li><b>2</b> What we built (the big picture)</li>
+    <li><b>3</b> The sounds we used, and why</li>
+    <li><b>4</b> Step 1–2: getting sounds ready</li>
+    <li><b>5</b> Step 3: mixing (making the mess)</li>
+    <li><b>6</b> Step 4–5: centering &amp; whitening</li>
+    <li><b>7</b> Step 6: ICA, the actual unmixing</li>
+    <li><b>8</b> Why ICA and not PCA?</li>
+    <li><b>9</b> The two things ICA can never know</li>
+    <li><b>10</b> How we measured success</li>
+    <li><b>11</b> The experiments &amp; what we found</li>
+    <li><b>12</b> The app, page by page</li>
+    <li><b>13</b> Bonus features</li>
+    <li><b>14</b> Testing: how we know it works</li>
+    <li><b>15</b> Every file, explained</li>
+    <li><b>16</b> How to run it yourself</li>
+    <li><b>17</b> Limits &amp; what could come next</li>
+    <li><b>18</b> Glossary</li>
+  </ul>
+
+  <h2>How to read this guide</h2>
+  <p>Each chapter answers three questions: <b>what</b> was done, <b>how</b> it was done, and <b>why</b>. Look out for
+  these coloured boxes:</p>
+  <div class="box analogy"><span class="t">🍹 Everyday analogy</span>A real-life comparison that makes the idea click.</div>
+  <div class="box why"><span class="t">💡 Why we did it this way</span>The reasoning behind a decision.</div>
+  <div class="box warn"><span class="t">⚠️ Watch out</span>A limitation or a common misunderstanding.</div>
+  <div class="box ok"><span class="t">✅ Result</span>A real number measured by the project. Nothing in this guide is made up:
+    every number comes from running <code>experiments.py</code>.</div>
+  <p>Dark boxes contain a small piece of maths. You can skip them. The text around them always explains the
+  same idea in words.</p>
+</section>
+
+<!-- ============================ 1 ============================ -->
+<section class="chapter newpage">
+  <div class="kicker">Chapter 1</div>
+  <h1><span class="num">1</span>The problem in one picture</h1>
+  <p class="lead">Imagine you are at a party. A friend is talking to you, music is playing, and it is raining
+  outside. Your ears hear <b>all three at once</b>, blended together. Yet your brain can somehow focus on your
+  friend's voice. This is called the <b>cocktail party problem</b>.</p>
+  <p>Now replace your ears with <b>three microphones</b> placed in different spots in the room. Each microphone
+  records a slightly different blend: the one near your friend hears mostly the voice, the one near the speaker
+  hears mostly music, and so on. But <i>every</i> microphone hears <i>a bit of everything</i>.</p>
+
+  <svg viewBox="0 0 640 230" width="100%" style="margin:2mm 0 4mm 0">
+    <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8a90a2"/></marker></defs>
+    <g font-family="Segoe UI, Arial" font-size="13">
+      <rect x="10" y="20" width="140" height="44" rx="10" fill="#ede9fe" stroke="#7c3aed"/><text x="80" y="47" text-anchor="middle" fill="#5b21b6">🗣️ Speech</text>
+      <rect x="10" y="93" width="140" height="44" rx="10" fill="#cffafe" stroke="#0891b2"/><text x="80" y="120" text-anchor="middle" fill="#155e75">🎵 Music</text>
+      <rect x="10" y="166" width="140" height="44" rx="10" fill="#ffe4e6" stroke="#e11d48"/><text x="80" y="193" text-anchor="middle" fill="#9f1239">🌧️ Rain</text>
+      <g stroke-width="2.2" fill="none" marker-end="url(#ar)">
+        <path d="M150 42 C 220 42, 230 42, 268 42" stroke="#7c3aed"/><path d="M150 42 C 220 60, 230 105, 268 112" stroke="#7c3aed" opacity=".45"/><path d="M150 42 C 220 90, 230 170, 268 182" stroke="#7c3aed" opacity=".35"/>
+        <path d="M150 115 C 220 100, 230 55, 268 48" stroke="#0891b2" opacity=".45"/><path d="M150 115 C 220 115, 230 115, 268 115" stroke="#0891b2"/><path d="M150 115 C 220 130, 230 175, 268 186" stroke="#0891b2" opacity=".45"/>
+        <path d="M150 188 C 220 170, 230 70, 268 52" stroke="#e11d48" opacity=".35"/><path d="M150 188 C 220 170, 230 130, 268 120" stroke="#e11d48" opacity=".45"/><path d="M150 188 C 220 188, 230 188, 268 188" stroke="#e11d48"/>
+      </g>
+      <rect x="270" y="22" width="110" height="40" rx="10" fill="#eef0f5" stroke="#8a90a2"/><text x="325" y="47" text-anchor="middle">🎙️ Mic 1</text>
+      <rect x="270" y="95" width="110" height="40" rx="10" fill="#eef0f5" stroke="#8a90a2"/><text x="325" y="120" text-anchor="middle">🎙️ Mic 2</text>
+      <rect x="270" y="168" width="110" height="40" rx="10" fill="#eef0f5" stroke="#8a90a2"/><text x="325" y="193" text-anchor="middle">🎙️ Mic 3</text>
+      <path d="M385 115 L 440 115" stroke="#14121f" stroke-width="3" marker-end="url(#ar)"/>
+      <rect x="445" y="80" width="80" height="70" rx="12" fill="#14121f"/><text x="485" y="110" text-anchor="middle" fill="#fff" font-weight="700">UNMIX</text><text x="485" y="128" text-anchor="middle" fill="#67e8f9" font-size="11">ICA</text>
+      <path d="M528 115 L 560 115" stroke="#14121f" stroke-width="3" marker-end="url(#ar)"/>
+      <g font-size="24"><text x="600" y="62" text-anchor="middle">🗣️</text><text x="600" y="124" text-anchor="middle">🎵</text><text x="600" y="186" text-anchor="middle">🌧️</text></g>
+      <text x="600" y="215" text-anchor="middle" fill="#5b6275" font-size="11">separated again!</text>
+    </g>
+  </svg>
+
+  <p><b>The challenge:</b> we only get the three messy recordings. We are <i>not</i> told what the original sounds were,
+  and we are <i>not</i> told how strongly each sound reached each microphone. From the mess alone, can a computer
+  recover the three clean sounds?</p>
+  <p>The answer is <b>yes</b>, using a method called <b>Independent Component Analysis (ICA)</b>. That is what this
+  whole project is about.</p>
+
+  <div class="box analogy"><span class="t">🍹 Everyday analogy: the smoothie</span>
+    Three friends each make a smoothie from the same three fruits (strawberry, banana, mango), but each uses a
+    different amount of each fruit. You get to taste the three smoothies, but nobody tells you the recipes. ICA is a
+    clever way of working out what each pure fruit tastes like, just from tasting the three blends.</div>
+
+  <h2>What the challenge asked for</h2>
+  <table>
+    <tr><th style="width:42%">Requirement</th><th>Where it is done in UNMIX</th></tr>
+    <tr><td>Choose clean sources (speech, music, ambient); mix N sources into ≥ N signals with our own mixing matrix</td><td>Chapters 3 and 5; <code>audio_utils.py</code>; the Mixing Chamber page</td></tr>
+    <tr><td>Center the mixed signals</td><td>Chapter 6; <code>whitening.py → center()</code></td></tr>
+    <tr><td>PCA whitening using covariance + eigendecomposition, written ourselves</td><td>Chapter 6; <code>whitening.py → pca_whiten()</code></td></tr>
+    <tr><td>ICA from scratch (e.g. FastICA), no library ICA</td><td>Chapter 7; <code>ica.py → fastica()</code></td></tr>
+    <tr><td>Export separated signals as playable audio</td><td><code>audio_utils.py → save_wav()</code>; download buttons in the app</td></tr>
+    <tr><td>Evaluate against originals, handling order and scale ambiguity</td><td>Chapters 9–10; <code>evaluation.py</code></td></tr>
+    <tr><td>Bonus: PCA vs ICA, noise levels, real recordings, mini-Shazam</td><td>Chapters 8, 11, 13</td></tr>
+  </table>
+</section>
+
+<!-- ============================ 2 ============================ -->
+<section class="chapter">
+  <div class="kicker">Chapter 2</div>
+  <h1><span class="num">2</span>What we built (the big picture)</h1>
+  <p class="lead"><b>UNMIX</b> is an interactive "audio lab" that runs in your web browser. You can pick sounds, mix
+  them, separate them again, <b>listen</b> to every stage, and see exactly how well the separation worked.</p>
+  <p>Behind the friendly screen there are three layers:</p>
+  <ol>
+    <li><b>The maths engine:</b> the part that actually separates sounds. Written by hand in Python using NumPy (a
+      library for fast number crunching). <i>No ready-made ICA library was used.</i></li>
+    <li><b>The measuring tools:</b> code that checks how close the separated sounds are to the real originals.</li>
+    <li><b>The interface:</b> a website built with Streamlit (a Python tool that turns scripts into web apps), with
+      charts made in Plotly.</li>
+  </ol>
+
+  <h2>The pipeline: the journey of a sound</h2>
+  <p>Every run follows the same assembly line. Each step is explained in its own chapter.</p>
+  <svg viewBox="0 0 640 150" width="100%" style="margin:1mm 0 3mm 0">
+    <g font-family="Segoe UI, Arial" font-size="11.5" text-anchor="middle">
+      <g fill="#ede9fe" stroke="#7c3aed">
+        <rect x="5" y="20" width="82" height="48" rx="9"/><rect x="95" y="20" width="82" height="48" rx="9"/><rect x="185" y="20" width="82" height="48" rx="9"/>
+        <rect x="275" y="20" width="82" height="48" rx="9"/><rect x="365" y="20" width="82" height="48" rx="9"/><rect x="455" y="20" width="82" height="48" rx="9"/><rect x="545" y="20" width="90" height="48" rx="9"/>
+      </g>
+      <g fill="#14121f">
+        <text x="46" y="41" font-weight="700">1 Load</text><text x="46" y="57" fill="#5b6275">clean up</text>
+        <text x="136" y="41" font-weight="700">2 Mix</text><text x="136" y="57" fill="#5b6275">X = A·S</text>
+        <text x="226" y="41" font-weight="700">3 Center</text><text x="226" y="57" fill="#5b6275">remove avg.</text>
+        <text x="316" y="41" font-weight="700">4 Whiten</text><text x="316" y="57" fill="#5b6275">PCA</text>
+        <text x="406" y="41" font-weight="700">5 ICA</text><text x="406" y="57" fill="#5b6275">rotate</text>
+        <text x="496" y="41" font-weight="700">6 Match</text><text x="496" y="57" fill="#5b6275">who is who</text>
+        <text x="590" y="41" font-weight="700">7 Score</text><text x="590" y="57" fill="#5b6275">+ export</text>
+      </g>
+      <g fill="#7c3aed"><text x="91" y="48">›</text><text x="181" y="48">›</text><text x="271" y="48">›</text><text x="361" y="48">›</text><text x="451" y="48">›</text><text x="541" y="48">›</text></g>
+      <text x="226" y="100" fill="#0891b2">└─────────── the separation itself (chapters 6–7) ───────────┘</text>
+      <text x="320" y="130" fill="#5b6275" font-size="11">Steps 3–5 are the core maths, written from scratch in whitening.py and ica.py</text>
+    </g>
+  </svg>
+
+  <figure><img src="../screenshots/01_overview.png"><figcaption>The home page of the app. The
+  “pipeline” chips light up as each stage is completed, and the status pill (top-left) shows READY → MIXING →
+  SEPARATING → COMPLETED.</figcaption></figure>
+
+  <div class="box why"><span class="t">💡 Why build an app instead of just a script?</span>
+    Separation is something you have to <b>hear</b> to believe. A script can print “correlation = 0.9999”, but
+    pressing play on a messy recording and then on a clean recovered voice is far more convincing, especially
+    in a live hackathon demo. The app also lets anyone experiment (change the mix, add noise) without writing code.</div>
+</section>
+
+<!-- ============================ 3 ============================ -->
+<section class="chapter">
+  <div class="kicker">Chapter 3</div>
+  <h1><span class="num">3</span>The sounds we used, and why</h1>
+  <p class="lead">To test separation fairly, we need <b>clean</b> original sounds, so that afterwards we can compare
+  what ICA recovered with the truth.</p>
+  <table>
+    <tr><th>Sound</th><th>Type</th><th>How it was made</th><th>Stored as</th></tr>
+    <tr><td>speech_female</td><td>speech</td><td>Windows' built-in text-to-speech voice “Zira” reading a sentence</td><td>22 050 Hz, mono</td></tr>
+    <tr><td>speech_male</td><td>speech</td><td>Windows voice “David” reading a fake news bulletin</td><td>22 050 Hz, mono</td></tr>
+    <tr><td>music_neon_drift</td><td>music</td><td>Composed by code: plucked-string synth, bass, drums</td><td>44 100 Hz, stereo</td></tr>
+    <tr><td>ambient_rain</td><td>ambient</td><td>Code-generated: hiss + random raindrops + wind + thunder</td><td>48 000 Hz, stereo</td></tr>
+    <tr><td>ambient_birds</td><td>ambient</td><td>Code-generated bird chirps (sweeping tones)</td><td>16 000 Hz, mono</td></tr>
+  </table>
+
+  <div class="box why"><span class="t">💡 Why generate sounds instead of downloading them?</span>
+    <ul style="margin:1mm 0 0 0">
+      <li><b>No copyright problems:</b> everything is ours, so the repository can be shared freely.</li>
+      <li><b>Perfectly clean:</b> real recordings always contain a bit of background noise. Generated sounds are
+        100% one source, which makes the evaluation honest.</li>
+      <li><b>Reproducible:</b> anyone can run <code>generate_sources.py</code> and get the exact same files.</li>
+    </ul></div>
+
+  <div class="box why"><span class="t">💡 Why are they stored in different formats on purpose?</span>
+    Real-world audio files are messy: some are stereo (two channels), some mono; some are recorded 16 000 times per
+    second, others 48 000 times per second. We deliberately stored our files in <b>different formats</b> so that the
+    loading code is genuinely tested. It must convert all of them into one common format before mixing.</div>
+
+  <h2>A tiny bit of audio basics</h2>
+  <p>A digital sound is just a <b>long list of numbers</b>. Each number is the air pressure (how far the speaker
+  cone is pushed) at one instant. The <b>sample rate</b> is how many numbers per second: 16 000 Hz means 16 000
+  numbers for every second of sound. An 8-second clip at 16 kHz is therefore a list of 128 000 numbers.</p>
+  <div class="box analogy"><span class="t">🍹 Everyday analogy: a flip-book</span>
+    A sample rate is like the number of pages in a flip-book per second. More pages give smoother motion. To compare
+    two flip-books page by page, they must have the same number of pages per second. That is why we
+    <b>resample</b> everything to 16 kHz first.</div>
+  <p>A <b>mixing matrix</b> sounds scary, but it is just a <b>table of volumes</b>: row = microphone, column =
+  source, and each cell says “how loud is this source in this microphone?”</p>
+</section>
+
+<!-- ============================ 4 ============================ -->
+<section class="chapter">
+  <div class="kicker">Chapter 4 · Pipeline steps 1–2</div>
+  <h1><span class="num">4</span>Getting the sounds ready</h1>
+  <p class="lead">Before any clever maths, every sound file goes through a cleaning routine in
+  <code>audio_utils.py</code>. Think of it as washing and chopping the vegetables before cooking.</p>
+  <ol class="steps">
+    <li><b>Read the file.</b> WAV files store numbers in different ways (whole numbers from −32 768 to 32 767, or
+      decimals). We convert everything to decimals between −1 and +1.<br><i>Why:</i> so all sounds speak the same “language”.</li>
+    <li><b>Stereo → mono.</b> If a file has left and right channels, we average them into one.<br><i>Why:</i> each
+      source should be <i>one</i> signal. Stereo would count as two.</li>
+    <li><b>Resample to 16 000 Hz</b> using a “polyphase” filter from SciPy, which avoids distortion (aliasing)
+      when changing speed.<br><i>Why:</i> mixing requires sample #1 of every sound to line up with sample #1 of the
+      others (the flip-book analogy).</li>
+    <li><b>Make lengths equal.</b> Trim every sound to the length of the shortest.<br><i>Why:</i> you can't add a
+      10-second list to an 8-second list number by number.</li>
+    <li><b>Standardise:</b> shift each sound so its average is 0 and scale it so its “typical size” (variance)
+      is 1.<br><i>Why:</i> ICA can never recover the original volume anyway (Chapter 9), so we put all sources on equal
+      footing. That way a loud source doesn't drown a quiet one in the measurements.</li>
+  </ol>
+  <h2>Safety checks (handling bad input)</h2>
+  <p>A good program fails politely. The loader gives a clear, human-readable error instead of crashing when:</p>
+  <ul>
+    <li>the file is not a real WAV file (“Could not read … Please upload PCM/float WAV audio”);</li>
+    <li>the file is <b>silent</b> (all zeros): ICA cannot do anything with silence;</li>
+    <li>the user picks fewer than two sources (you can't “separate” one sound from itself).</li>
+  </ul>
+  <p>When saving, we scale the sound so its loudest point is at 90% of the maximum. A careless version would divide
+  by the loudest value, and for a silent signal that is <b>division by zero</b>. Our code checks for this and
+  simply writes silence.</p>
+  <div class="box ok"><span class="t">✅ Tested</span>Automated tests feed in a 44.1 kHz stereo file, a silent file, a
+  file that isn't audio at all, and sounds of unequal lengths, and check the result each time (Chapter 14).</div>
+</section>
+
+<!-- ============================ 5 ============================ -->
+<section class="chapter">
+  <div class="kicker">Chapter 5 · Pipeline step 2</div>
+  <h1><span class="num">5</span>Mixing: making the mess on purpose</h1>
+  <p class="lead">To prove that we can unmix, we first have to mix, using our <b>own</b> mixing matrix, exactly as
+  the challenge asked.</p>
+  <p>Here is the hand-written “room recipe” used in the main experiment:</p>
+  <table style="width:70%">
+    <tr><th></th><th>Speech</th><th>Music</th><th>Rain</th></tr>
+    <tr><td><b>Mic 1</b></td><td><b>1.00</b></td><td>0.60</td><td>0.45</td></tr>
+    <tr><td><b>Mic 2</b></td><td>0.55</td><td><b>1.00</b></td><td>0.50</td></tr>
+    <tr><td><b>Mic 3</b></td><td>0.40</td><td>0.65</td><td><b>1.00</b></td></tr>
+  </table>
+  <p>Read the first row as: <i>“Microphone 1 records 100% of the speech, plus 60% of the music, plus 45% of the
+  rain.”</i> Each microphone is closest to one source but hears all three. In maths form:</p>
+  <div class="math">Mic1(t) = 1.00·Speech(t) + 0.60·Music(t) + 0.45·Rain(t)
+Mic2(t) = 0.55·Speech(t) + 1.00·Music(t) + 0.50·Rain(t)
+Mic3(t) = 0.40·Speech(t) + 0.65·Music(t) + 1.00·Rain(t)
+<span class="c"># written compactly:   X = A · S   (A is the 3×3 table above)</span></div>
+
+  <figure><img src="../screenshots/03_mixing_chamber.png"><figcaption>The Mixing Chamber page. The
+  heat-map shows the matrix, the flow diagram shows how much of each source reaches each microphone, and the bottom
+  shows the clean sources next to the messy microphone recordings. You can choose a preset, a random matrix, or
+  type your own numbers. Optional “sensor noise” can be added to simulate cheap microphones.</figcaption></figure>
+
+  <div class="box why"><span class="t">💡 Why must there be at least as many microphones as sources?</span>
+    Think of solving equations. With 3 unknowns (the three sources) you need at least 3 equations (microphones). With
+    only 2 microphones and 3 sources there are infinitely many answers, so the problem can't be solved this way.
+    The app also warns you if your matrix is “broken” (two microphones that hear exactly the same blend), because then
+    you effectively have fewer equations than unknowns.</div>
+</section>
+
+<!-- ============================ 6 ============================ -->
+<section class="chapter">
+  <div class="kicker">Chapter 6 · Pipeline steps 3–4</div>
+  <h1><span class="num">6</span>Centering &amp; whitening: tidying the data</h1>
+  <p class="lead">These two steps don't separate anything yet. They <b>simplify the puzzle</b> so the real
+  separation step (ICA) becomes much easier. All of it is in <code>whitening.py</code>, written by hand.</p>
+
+  <h2>Step 3: Centering</h2>
+  <p>We subtract each microphone's average value so that every signal wobbles around zero.</p>
+  <div class="box analogy"><span class="t">🍹 Analogy</span>Before comparing the heights of children in different
+  classrooms, you measure from the floor, not from the top of a table. Centering puts every signal on the same “floor”.</div>
+
+  <h2>Step 4: Whitening (using PCA)</h2>
+  <p>The three microphone recordings are strongly <b>correlated</b>: when one goes up, the others tend to go up too,
+  because they all contain the same sources. Whitening is a transformation that removes this correlation and makes
+  every direction have the same “spread”.</p>
+  <p>It is done in three small sub-steps:</p>
+  <ol class="steps">
+    <li><b>Covariance matrix.</b> A 3×3 table saying how much each pair of microphones moves together. (Values near 0 mean
+      “unrelated”; large values mean “move together”.)</li>
+    <li><b>Eigendecomposition.</b> This finds the <b>main directions</b> in which the data is spread out (the
+      “eigenvectors”) and how spread out it is along each one (the “eigenvalues”). This part is called PCA (Principal
+      Component Analysis).</li>
+    <li><b>Rotate and rescale.</b> Turn the data so those main directions line up with the axes, then squash or stretch
+      each axis so the spread is exactly 1 in every direction.</li>
+  </ol>
+  <div class="math"><span class="c"># the maths, for the curious (whitening.py)</span>
+C  = Xc · Xcᵀ / (T − 1)          <span class="c"># covariance of the centred data</span>
+C  = E · D · Eᵀ                  <span class="c"># eigendecomposition (np.linalg.eigh)</span>
+K  = D^(−½) · Eᵀ                 <span class="c"># whitening matrix: rotate (Eᵀ), then rescale (D^−½)</span>
+Z  = K · Xc                      <span class="c"># whitened data — its covariance is the identity matrix I</span></div>
+
+  <div class="box analogy"><span class="t">🍹 Analogy: the squashed balloon</span>
+    Picture a cloud of data points shaped like a squashed, tilted balloon. Whitening turns it upright and inflates it
+    evenly until it is a perfectly round ball. It is the same balloon, just reshaped. Nothing has been lost.</div>
+
+  <div class="box why"><span class="t">💡 Why whitening makes ICA so much easier</span>
+    Without whitening, ICA would have to search through <b>every possible 3×3 table</b> of numbers (9 unknowns, and
+    many more for more sources). After whitening, it can be proven that the only thing left to find is a
+    <b>rotation</b>, like turning a dial. For 3 sources that is just 3 angles instead of 9 numbers; for 2 sources it
+    is a single angle. A smaller search is faster, more stable, and less likely to get lost.</div>
+
+  <div class="box ok"><span class="t">✅ Result</span>After whitening, the covariance matrix of our data equals the
+  identity matrix to within 0.00000000000001 (that is, 10<sup>−14</sup>, essentially perfect). A unit test checks
+  this automatically every time.</div>
+</section>
+
+<!-- ============================ 7 ============================ -->
+<section class="chapter">
+  <div class="kicker">Chapter 7 · Pipeline step 5</div>
+  <h1><span class="num">7</span>ICA: the actual unmixing</h1>
+  <p class="lead">Now the star of the show. ICA looks for the rotation that turns the whitened data back into
+  separate, <b>independent</b> sources. We implemented the popular <b>FastICA</b> algorithm from scratch in
+  <code>ica.py</code>.</p>
+
+  <h2>The key insight: mixtures look “more average”</h2>
+  <p>There is a famous result in statistics called the <b>Central Limit Theorem (CLT)</b>. In everyday words:</p>
+  <div class="box analogy"><span class="t">🎲 Analogy: rolling dice</span>
+    Roll <b>one</b> die: every number 1–6 is equally likely, a flat pattern. Roll <b>two</b> dice and add them: 7 becomes
+    the most common total and the pattern turns into a triangle. Add <b>ten</b> dice and the pattern becomes the famous
+    smooth <b>bell curve</b> (called a “Gaussian”). <i>Adding independent things together always pushes the result
+    towards a bell curve.</i></div>
+  <p>Our sounds are <b>not</b> bell-curve shaped. Speech, for example, is “spiky”: mostly quiet with sudden loud
+  bursts. But a <b>mixture</b> of several sounds is a sum, so it looks <i>more</i> bell-shaped than any single sound.</p>
+  <p>So ICA uses this trick: <b>turn the dial until the output looks as un-bell-like (“non-Gaussian”) as
+  possible.</b> At that position, each output contains just one source.</p>
+
+  <figure class="wide"><img src="../../outputs/figures/e7_clt.png"><figcaption>Measured on our own sounds
+  (Experiment 7). “Excess kurtosis” measures spikiness: 0 = perfect bell curve. One source alone is very spiky (8.9);
+  summing more sources pushes it steadily towards 0 (2.0 for five sources). The Central Limit Theorem in action.</figcaption></figure>
+
+  <h2>How FastICA turns the dial</h2>
+  <ol class="steps">
+    <li>Start from a random rotation.</li>
+    <li>Measure how non-Gaussian each output is, using a smooth “score” function (we use <code>log cosh</code>,
+      whose slope is <code>tanh</code>, as the challenge suggested).</li>
+    <li>Take a clever jump (a Newton step) towards a rotation with a better score.</li>
+    <li>Keep the outputs from collapsing onto the same source by forcing them to stay at right angles
+      (“symmetric decorrelation”).</li>
+    <li>Repeat until the rotation stops changing (change smaller than 0.000001). On our audio this takes only
+      <b>4–8 rounds</b> and about 0.1 seconds.</li>
+  </ol>
+  <div class="math"><span class="c"># one FastICA update for each direction w (ica.py)</span>
+w  ←  average[ z · g(wᵀz) ]  −  average[ g′(wᵀz) ] · w       <span class="c"># g = tanh</span>
+W  ←  (W Wᵀ)^(−½) · W                                       <span class="c"># keep the directions perpendicular</span></div>
+
+  <figure class="wide"><img src="../../outputs/figures/e1_scatter.png"><figcaption>The whole idea in four pictures (real data:
+  speech plotted against music). <b>1</b> The original sources form a “+” shape. <b>2</b> Mixing shears and tilts it.
+  <b>3</b> Whitening makes it round but it is still tilted. <b>4</b> ICA finds the rotation that lines the arms up with
+  the axes again, and the sources are separated.</figcaption></figure>
+
+  <div class="box why"><span class="t">💡 Why FastICA with tanh?</span>
+    FastICA is fast (it converges in a handful of steps, not thousands), well understood, and only needs basic matrix
+    maths, so it was realistic to write from scratch. The <code>tanh</code> version is the standard robust choice. We also
+    implemented two alternatives (<code>exp</code> and <code>cube</code>) and a one-at-a-time “deflation” variant, and compared
+    them in Experiment 4.</div>
+</section>
+
+<!-- ============================ 8 ============================ -->
+<section class="chapter">
+  <div class="kicker">Chapter 8</div>
+  <h1><span class="num">8</span>Why ICA and not PCA?</h1>
+  <p class="lead">PCA (from Chapter 6) is a famous, simpler technique. Why isn't it enough on its own?</p>
+  <div class="two">
+    <div class="box why" style="margin:0"><span class="t">PCA asks…</span>“Are the outputs <b>uncorrelated</b>?”<br>
+      It only looks at <b>averages and spreads</b> (so-called second-order statistics). It finds the directions where the
+      data is most spread out.</div>
+    <div class="box analogy" style="margin:0"><span class="t">ICA asks…</span>“Are the outputs <b>independent</b>?”<br>
+      A much stronger demand: knowing one output tells you <i>nothing</i> about the other. To check this it uses the
+      <b>shape</b> of the data (higher-order statistics such as spikiness).</div>
+  </div>
+  <p style="margin-top:4mm"><b>Uncorrelated is not the same as independent.</b> Here is a simple example: let <i>y = x²</i>
+  where <i>x</i> is equally likely to be −1, 0 or +1. Then <i>x</i> and <i>y</i> are uncorrelated (no straight-line
+  relationship), yet <i>y</i> is completely determined by <i>x</i>!</p>
+  <p>After whitening, the data is already uncorrelated <b>no matter how you rotate it</b>. So PCA has no reason to
+  prefer one rotation over another, and it simply stops at a rotation that is still mixed. ICA keeps going and picks
+  the one rotation that gives independent outputs.</p>
+  <figure class="wide"><img src="../../outputs/figures/e1_pca_vs_ica.png"><figcaption>Measured separation quality
+  (higher is better). <b>Best single mic</b> = just listening to the closest microphone. <b>PCA only</b> is barely better
+  than doing nothing (it is sometimes even worse). <b>ICA</b> is around 40 dB, near-perfect.</figcaption></figure>
+  <div class="box ok"><span class="t">✅ Result</span>Average quality: <b>ICA 39.9 dB</b> vs PCA −0.4 dB vs best microphone
+  2.5 dB. (Chapter 10 explains what “dB” means here.)</div>
+</section>
+
+<!-- ============================ 9 ============================ -->
+<section class="chapter">
+  <div class="kicker">Chapter 9</div>
+  <h1><span class="num">9</span>The two things ICA can never know</h1>
+  <p class="lead">ICA is powerful, but there are two things it can <b>never</b> figure out, no matter how good the
+  code is. These are not bugs: they come from the nature of the problem.</p>
+  <h2>1. The order (permutation)</h2>
+  <p>ICA hands back three separated sounds, but it doesn't know their names. Output #1 might be the music, output #2
+  the rain, output #3 the speech. In our main run, that is exactly what happened.</p>
+  <div class="box analogy"><span class="t">🍹 Analogy</span>You unscramble three jigsaw puzzles that were mixed in one
+  box. You can rebuild each picture perfectly, but nothing tells you which one was “puzzle number 1” on the shop shelf.</div>
+  <h2>2. The volume and the sign (scale &amp; polarity)</h2>
+  <p>A quiet source mixed in loudly looks exactly the same as a loud source mixed in quietly, so ICA can't recover the
+  true volume. It also can't tell a sound from its <b>upside-down</b> version (every number multiplied by −1). That
+  sounds identical to our ears, but it matters when comparing numbers.</p>
+
+  <h2>How we deal with it: matching</h2>
+  <p>To score the results we need to know which output belongs to which original. We:</p>
+  <ol class="steps">
+    <li>compute how similar every output is to every original (a 3×3 table of “correlations”);</li>
+    <li>use the <b>Hungarian algorithm</b> to pick the best one-to-one pairing, the pairing with the highest
+      total similarity;</li>
+    <li>flip the sign and adjust the volume of each output to best fit its partner (a simple least-squares fit).</li>
+  </ol>
+  <div class="box why"><span class="t">💡 Why the Hungarian algorithm and not just “pick the best match each time”?</span>
+    The greedy approach can give the same output to two different sources (both might look most like output #2).
+    The Hungarian algorithm is a classic method for assigning workers to jobs. It guarantees every source gets its own
+    output, and that the total match is the best possible.</div>
+  <div class="box warn"><span class="t">⚠️ Important</span>This matching uses the original clean sounds, so it is only
+  possible in our controlled experiments. With real recordings (no originals), you would identify the outputs by
+  listening. The app explains this to users with a note on the Reveal page.</div>
+  <figure><img src="../screenshots/05_separation_reveal.png"><figcaption>The Separation Reveal page:
+  originals (left), microphone recordings (middle), recovered sounds (right). Below, each raw component has its own
+  player and download button, labelled with the source it was matched to.</figcaption></figure>
+</section>
+
+<!-- ============================ 10 ============================ -->
+<section class="chapter">
+  <div class="kicker">Chapter 10</div>
+  <h1><span class="num">10</span>How we measured success</h1>
+  <p class="lead">“It sounds good” is not scientific. We used several numbers, each chosen for a reason, and
+  always compared against <b>baselines</b> so the numbers mean something.</p>
+  <table>
+    <tr><th style="width:22%">Metric</th><th>What it means in plain words</th><th style="width:28%">Why we used it</th></tr>
+    <tr><td><b>Correlation |r|</b></td><td>How closely the recovered wave follows the original, from 0 (unrelated) to 1
+      (identical shape). We ignore the sign, because of Chapter 9.</td><td>Easy to understand. Required by the brief.</td></tr>
+    <tr><td><b>SI-SDR (dB)</b></td><td>How much of the recovered sound is the right source vs. leftover junk, on a
+      decibel scale. The volume is adjusted automatically before comparing.</td><td>The standard metric in modern source
+      separation research. Correlation “saturates” near 1; SI-SDR still shows the difference.</td></tr>
+    <tr><td><b>SIR / SAR</b></td><td>Splits the junk into <i>leakage from the other sources</i> (SIR) vs. <i>noise and
+      artefacts</i> (SAR).</td><td>Tells us <b>why</b> a separation is imperfect.</td></tr>
+    <tr><td><b>Amari index</b></td><td>Checks the unmixing table itself: 0 means it perfectly undoes the mixing.</td>
+      <td>Judges the algorithm independent of the particular sounds.</td></tr>
+  </table>
+  <h2>Understanding decibels (dB)</h2>
+  <p>Decibels compare two amounts of energy on a “times ten” scale: every <b>+10 dB</b> means the junk is
+  <b>10 times smaller</b> compared with the wanted sound.</p>
+  <table style="width:85%">
+    <tr><th>SI-SDR</th><th>Junk vs. wanted sound</th><th>What you hear</th></tr>
+    <tr><td>0 dB</td><td>equal amounts</td><td><span class="bad">still a mess</span></td></tr>
+    <tr><td>10 dB</td><td>junk is 10× smaller</td><td>clearly separated, faint leakage</td></tr>
+    <tr><td>20 dB</td><td>100× smaller</td><td>very clean</td></tr>
+    <tr><td>40 dB</td><td>10 000× smaller</td><td><span class="good">essentially perfect</span></td></tr>
+  </table>
+  <h2>The two baselines</h2>
+  <ul>
+    <li><b>Best single microphone:</b> what you would get by doing nothing and just listening to the closest mic.
+      If ICA doesn't beat this, it isn't helping.</li>
+    <li><b>PCA only:</b> the simpler technique, to prove that ICA's extra “independence” step is what matters.</li>
+  </ul>
+  <figure><img src="../screenshots/06_evaluation.png"><figcaption>The Evaluation dashboard: a quality
+  gauge driven by the real measured SI-SDR, per-source bars against both baselines, the full metrics table, and the
+  correlation tables that the matching is based on.</figcaption></figure>
+  <div class="box warn"><span class="t">⚠️ Honest limitation</span>All these metrics need the clean originals, so they only
+  work in controlled experiments. They also measure energy, not human perception.</div>
+</section>
+
+<!-- ============================ 11 ============================ -->
+<section class="chapter">
+  <div class="kicker">Chapter 11</div>
+  <h1><span class="num">11</span>The experiments &amp; what we found</h1>
+  <p class="lead">One success could be luck. So <code>experiments.py</code> runs <b>eight experiments</b>, each
+  testing one assumption or weakness. Every run uses fixed random “seeds”, so anyone gets the same numbers. The full
+  tables are in <code>REPORT.md</code>.</p>
+
+  <table>
+    <tr><th style="width:23%">Experiment</th><th style="width:30%">Question</th><th>What we found (real numbers)</th></tr>
+    <tr><td><b>E1 Baseline</b><br>speech + music + rain</td><td>Does it work at all?</td><td><span class="good">Yes.</span> 39.9 dB
+      average; correlation 0.9999; converged in 5 rounds.</td></tr>
+    <tr><td><b>E2 Mixing matrices</b></td><td>Does the recipe matter?</td><td>Without noise: <b>no</b>. All 30 random recipes gave
+      39.9 dB (a known property called <i>equivariance</i>). With noise: yes. “Nearly broken” recipes amplify noise
+      (correlation −0.97 between how broken the recipe is and the quality). One extreme case <span class="bad">failed</span>
+      (−15 dB). Using 5 microphones instead of 3 helped (16.3 vs 13.8 dB).</td></tr>
+    <tr><td><b>E3 Noise sweep</b></td><td>What if the microphones are noisy?</td><td>Quality drops as noise rises: 39.9 → 22.7 dB at
+      30 dB noise level → 3.4 dB at 10 dB → <span class="bad">−5.2 dB</span> when noise is as loud as the signal.</td></tr>
+    <tr><td><b>E4 Algorithm variants</b></td><td>Does the score function matter?</td><td>tanh, exp and cube all ≈ 21.5 dB; the
+      “all at once” version needs 5–6 rounds vs 11–15 for “one at a time”.</td></tr>
+    <tr><td><b>E5 More sources</b></td><td>Does it scale from 2 to 5 sounds?</td><td>Yes: 17.7–25.6 dB for 2–5 sources (with noise);
+      PCA stays near 0 dB.</td></tr>
+    <tr><td><b>E6 Gaussian sources</b></td><td>When should ICA fail?</td><td>With two bell-curve (random noise) sources, those two
+      <span class="bad">can't be separated</span> (≈ 2 dB), exactly as theory predicts. The speech next to them is still
+      recovered perfectly.</td></tr>
+    <tr><td><b>E7 CLT check</b></td><td>Do mixtures really look more bell-shaped?</td><td>Yes: spikiness 8.9 → 5.1 → 3.2 → 2.5 → 2.0
+      as 1 → 5 sources are added.</td></tr>
+    <tr><td><b>E8 Mini-Shazam</b></td><td>Does separation help recognise a song?</td><td>Raw mixtures: 2–3 votes, mostly the
+      <span class="bad">wrong song</span>. After ICA: the right song, 36 votes vs 9.</td></tr>
+  </table>
+
+  <figure class="wide"><img src="../../outputs/figures/e3_snr_sweep.png"><figcaption>Experiment 3: as microphone noise
+  increases (left to right), ICA's quality falls. ICA <b>separates</b> sources but does not <b>remove noise</b>: the noise
+  gets unmixed along with everything else.</figcaption></figure>
+
+  <div class="box why"><span class="t">💡 Why we report failures too</span>
+    The brief said “do not fabricate successful results”. Showing <i>where</i> a method breaks (heavy noise, nearly
+    broken mixing, Gaussian sources) proves we understand it, and every failure matches what the theory predicts.
+    The report text is generated automatically from the measured numbers, so it can't be “tweaked”.</div>
+</section>
+
+<!-- ============================ 12 ============================ -->
+<section class="chapter">
+  <div class="kicker">Chapter 12</div>
+  <h1><span class="num">12</span>The app, page by page</h1>
+  <p class="lead">The left sidebar lists the pages in the order of the pipeline. The <b>⚡ One-click demo</b>
+  button runs everything for you and jumps straight to the results.</p>
+  <table>
+    <tr><th style="width:26%">Page</th><th>What you can do there</th></tr>
+    <tr><td>🏠 Lab Overview</td><td>Introduction, pipeline progress, headline numbers after a run.</td></tr>
+    <tr><td>🎙️ A · Sound Studio</td><td>Pick bundled sounds or upload your own WAVs; see each waveform; play each source; see
+      how “spiky” (non-Gaussian) it is.</td></tr>
+    <tr><td>🌀 B · Mixing Chamber</td><td>Choose the number of microphones; pick a preset, random or hand-typed mixing table;
+      add noise; see warnings if the table is nearly broken; listen to the mixtures.</td></tr>
+    <tr><td>⚙️ C · ICA Engine</td><td>Choose algorithm settings and press <b>Run UNMIX</b>. See the before/after covariance, the
+      eigenvalues, the convergence curve, the unmixing table, and the “+” shape pictures from Chapter 7.</td></tr>
+    <tr><td>✨ D · Separation Reveal</td><td>Originals vs mixtures vs recovered; play/download every component; zoom into
+      the waveform to compare samples; spectrograms (pictures of pitch over time).</td></tr>
+    <tr><td>📊 E · Evaluation</td><td>Quality gauge, metrics table, PCA vs ICA, live noise and mixing experiments,
+      downloadable report (Markdown, JSON, or a ZIP with all audio).</td></tr>
+    <tr><td>🔬 F · Science of Sound</td><td>Interactive lessons: rotate the data yourself and watch the “non-Gaussianity score”
+      peak exactly where the sources separate; add sources and watch the histogram turn into a bell curve.</td></tr>
+    <tr><td>📱 Real-World Mode</td><td>Upload recordings made on several phones at the same time and try to separate them.</td></tr>
+    <tr><td>🎵 Mini-Shazam</td><td>Identify which song is playing, before and after separation.</td></tr>
+  </table>
+  <figure><img src="../screenshots/07_science.png"><figcaption>The Science page turns the theory into
+  sliders, so you can find the “right rotation” by hand, the same thing FastICA does automatically in a few steps.</figcaption></figure>
+  <div class="box why"><span class="t">💡 Design choices</span>Dark “audio studio” look with violet, cyan and coral accents,
+  as the brief requested. Every chart uses the same colour for the same source everywhere (speech = violet, music = cyan,
+  rain = coral), so you can follow a sound across pages. A live status pill shows Ready / Mixing / Separating / Completed.</div>
+</section>
+
+<!-- ============================ 13 ============================ -->
+<section class="chapter">
+  <div class="kicker">Chapter 13</div>
+  <h1><span class="num">13</span>Bonus features</h1>
+  <h2>Mini-Shazam (song recognition)</h2>
+  <p>This is clearly marked as an <b>extension</b>, not part of ICA. It recognises songs from a small library of 6
+  tracks (all composed by our code) using the same core idea as the real Shazam:</p>
+  <ol class="steps">
+    <li>Turn the audio into a <b>spectrogram</b> (a picture with time across and pitch up).</li>
+    <li>Keep only the brightest peaks, like stars in a night sky: a “constellation map”.</li>
+    <li>Link pairs of nearby stars into <b>fingerprints</b> (pitch 1, pitch 2, time gap). These survive noise and volume changes.</li>
+    <li>Look up the fingerprints in the library. The real song produces many matches that agree on the <b>same time
+      offset</b>; random matches don't agree. The song with the most agreeing votes wins.</li>
+  </ol>
+  <figure><img src="../screenshots/08_mini_shazam.png"><figcaption>After ICA has pulled the music
+  out of the mix, the song is identified confidently.</figcaption></figure>
+  <h2>Real-world mode</h2>
+  <p>You can record a scene on several phones at once and upload the files. Because phones never start recording at
+  exactly the same instant, the app <b>lines them up automatically</b> by sliding one recording against the other
+  until they match best (this is called cross-correlation).</p>
+  <div class="box warn"><span class="t">⚠️ Honest expectation</span>In a real room, sound bounces off walls and reaches each
+  microphone at slightly different times (echoes and delays). Our ICA assumes an instant, echo-free mix, so on real
+  recordings the separation will usually be <b>partial</b>. The app says this clearly. There are no “true” originals,
+  so instead of scores it shows spikiness statistics.</div>
+  <h2>Other extras</h2>
+  <ul>
+    <li>Interactive mixing-table editor with warnings for broken tables.</li>
+    <li>Live noise-level and mixing-condition experiments on your own sounds.</li>
+    <li>Downloadable report and ZIP of all audio for every run.</li>
+    <li>“Deep links” such as <code>?page=reveal&amp;demo=1</code> that open a ready-made demo, handy on stage.</li>
+  </ul>
+</section>
+
+<!-- ============================ 14 ============================ -->
+<section class="chapter">
+  <div class="kicker">Chapter 14</div>
+  <h1><span class="num">14</span>Testing: how we know it works</h1>
+  <p class="lead">A <b>test</b> is a small program that checks another program gives the right answer. The project
+  has <b>30 automated tests</b> (in <code>tests/test_pipeline.py</code>), run with one command. All 30 pass.</p>
+  <div class="box why"><span class="t">💡 Why tests matter here</span>
+    With maths code, a tiny mistake (a wrong sign, a transposed matrix) can give results that <i>look</i> plausible but
+    are wrong. Tests with <b>known answers</b> catch this. We build fake sources we fully control (a sine wave, a square
+    wave, random noise of known shapes), mix them with a known table, and check that ICA gets them back.</div>
+  <table>
+    <tr><th style="width:30%">Area</th><th>What the tests check</th></tr>
+    <tr><td>Whitening</td><td>Covariance becomes the identity; works with more mics than sources; refuses impossible requests
+      and silent input.</td></tr>
+    <tr><td>ICA</td><td>Recovers known sources for all 3 score functions × 2 strategies (correlation &gt; 0.99); the rotation is
+      truly a rotation; the unmixing exactly undoes the mixing; same seed gives the same answer.</td></tr>
+    <tr><td>PCA comparison</td><td>PCA alone does <i>not</i> separate (proving the test can tell the difference).</td></tr>
+    <tr><td>Evaluation</td><td>Matching survives shuffled order, flipped signs and changed volumes; SI-SDR ignores volume and sign.</td></tr>
+    <tr><td>Audio handling</td><td>Stereo 44.1 kHz → mono 16 kHz; silent and fake files give clear errors; exported WAVs are
+      valid; noise is added at exactly the requested level; recordings offset by 237 samples are re-aligned.</td></tr>
+    <tr><td>End-to-end</td><td>The real bundled sounds separate at over 25 dB; Mini-Shazam finds the right song and the right
+      time position.</td></tr>
+  </table>
+  <p>On top of the automated tests, every page of the app was clicked through in a browser to check for errors. Two real
+  bugs were found and fixed this way: a naming clash between two buttons and their saved results, and a metric that
+  showed a meaningless “251 dB” in the noise-free case (now shown honestly as “∞, no noise”).</p>
+</section>
+
+<!-- ============================ 15 ============================ -->
+<section class="chapter">
+  <div class="kicker">Chapter 15</div>
+  <h1><span class="num">15</span>Every file, explained</h1>
+  <table>
+    <tr><th style="width:28%">File / folder</th><th>What it does</th></tr>
+    <tr><td><code>app.py</code></td><td>The website (all the pages from Chapter 12). Only the interface; no maths lives here.</td></tr>
+    <tr><td><code>whitening.py</code></td><td>Centering, covariance, eigendecomposition and PCA whitening, written by hand (Chapter 6).</td></tr>
+    <tr><td><code>ica.py</code></td><td>FastICA from scratch: three score functions, two strategies, plus spikiness measures (Chapter 7).</td></tr>
+    <tr><td><code>audio_utils.py</code></td><td>Loading, converting, resampling, aligning, mixing, adding noise and saving audio (Chapters 4–5).</td></tr>
+    <tr><td><code>evaluation.py</code></td><td>Hungarian matching and all the quality scores (Chapters 9–10).</td></tr>
+    <tr><td><code>visualization.py</code></td><td>Every chart: interactive ones for the app, static images for the report.</td></tr>
+    <tr><td><code>experiments.py</code></td><td>Runs the 8 experiments and writes <code>REPORT.md</code>, the figures and the separated WAVs (Chapter 11).</td></tr>
+    <tr><td><code>fingerprint.py</code></td><td>The Mini-Shazam extension (Chapter 13).</td></tr>
+    <tr><td><code>generate_sources.py</code></td><td>Creates all the sounds from scratch (Chapter 3).</td></tr>
+    <tr><td><code>data/sources/</code></td><td>The 5 clean sounds.</td></tr>
+    <tr><td><code>data/library/</code></td><td>The 6 songs for Mini-Shazam.</td></tr>
+    <tr><td><code>outputs/separated/</code></td><td>The separated audio files: listen to these!</td></tr>
+    <tr><td><code>outputs/figures/</code></td><td>The graphs used in the report and this guide.</td></tr>
+    <tr><td><code>notebooks/</code></td><td>A step-by-step Jupyter notebook with code, results and audio players.</td></tr>
+    <tr><td><code>tests/</code></td><td>The 30 automated tests (Chapter 14).</td></tr>
+    <tr><td><code>README.md</code> / <code>REPORT.md</code></td><td>Technical documentation and the full experiment report.</td></tr>
+    <tr><td><code>requirements.txt</code></td><td>The list of Python libraries needed.</td></tr>
+  </table>
+  <div class="box why"><span class="t">💡 Why split the code into many small files?</span>
+    Each file has one job, like rooms in a house. If the separation maths needs fixing, you only open <code>ica.py</code>;
+    the website, the tests and the experiments all reuse that same file. That means the numbers in the app, the report and
+    the notebook can never disagree.</div>
+
+  <h2>Libraries used, and what for</h2>
+  <ul>
+    <li><b>NumPy</b>: fast maths on long lists of numbers. All of the ICA and whitening is built on it.</li>
+    <li><b>SciPy</b>: reading/writing WAV files, resampling, spectrograms, and the Hungarian algorithm. <i>Not</i> used for ICA.</li>
+    <li><b>Streamlit</b> (website), <b>Plotly</b> (interactive charts), <b>Matplotlib</b> (report images), <b>pandas</b> (tables), <b>pytest</b> (tests).</li>
+    <li>Deliberately <b>not used</b>: scikit-learn's FastICA or any other ready-made ICA, as the challenge required.</li>
+  </ul>
+</section>
+
+<!-- ============================ 16 ============================ -->
+<section class="chapter">
+  <div class="kicker">Chapter 16</div>
+  <h1><span class="num">16</span>How to run it yourself</h1>
+  <h2>On this computer (everything is already installed)</h2>
+  <ol class="steps">
+    <li>Open a terminal (search “PowerShell” in the Start menu).</li>
+    <li>Go to the project folder:<div class="math">cd "D:\UNMI THE SIGNAL"</div></li>
+    <li>Start the app:<div class="math">py -m streamlit run app.py</div>Your browser opens at <code>http://localhost:8501</code>.</li>
+    <li>Click <b>⚡ One-click demo</b> in the sidebar, then explore the pages.</li>
+    <li>To stop the app, press <b>Ctrl + C</b> in the terminal.</li>
+  </ol>
+  <div class="box warn"><span class="t">⚠️ Use <code>py</code>, not <code>python</code></span>On this PC, typing <code>python</code>
+  opens the Microsoft Store instead of running Python. The <code>py</code> command works.</div>
+
+  <h2>On a new computer</h2>
+  <div class="math">git clone https://github.com/AnjaniChitlangia/Unmix-the-Signal.git
+cd Unmix-the-Signal
+pip install -r requirements.txt
+streamlit run app.py</div>
+
+  <h2>Other useful commands (run inside the project folder)</h2>
+  <table>
+    <tr><th style="width:42%">Command</th><th>What it does</th></tr>
+    <tr><td><code>py experiments.py</code></td><td>Re-runs all 8 experiments (~40 s) and rebuilds REPORT.md, figures and audio.</td></tr>
+    <tr><td><code>py -m pytest -q</code></td><td>Runs the 30 tests. Should end with “30 passed”.</td></tr>
+    <tr><td><code>py generate_sources.py</code></td><td>Re-creates all the sound files from scratch.</td></tr>
+    <tr><td><code>py notebooks/build_notebook.py</code></td><td>Re-runs the step-by-step notebook.</td></tr>
+  </table>
+
+  <h2>A 3-minute demo script for presenting</h2>
+  <ol>
+    <li>Open the app and explain the cocktail party problem (Chapter 1).</li>
+    <li>Click <b>⚡ One-click demo</b>. Play a mixture, then play each recovered component.</li>
+    <li>Point to the amber note about order and polarity (Chapter 9).</li>
+    <li>ICA Engine → <b>Geometry</b> tab: show the “+” shape being restored (Chapter 7).</li>
+    <li>Science page: drag the rotation slider to the peak.</li>
+    <li>Evaluation: show ~40 dB for ICA vs ~0 dB for PCA, then run the noise sweep.</li>
+    <li>Mini-Shazam: identify the song from a mixture vs. from the ICA output.</li>
+  </ol>
+</section>
+
+<!-- ============================ 17 ============================ -->
+<section class="chapter">
+  <div class="kicker">Chapter 17</div>
+  <h1><span class="num">17</span>Limits &amp; what could come next</h1>
+  <h2>What ICA assumes (and when it breaks)</h2>
+  <table>
+    <tr><th style="width:36%">Assumption</th><th>What happens if it's not true</th></tr>
+    <tr><td>Sounds mix <b>instantly</b>, with no echoes or delays</td><td>Real rooms have echoes, so separation becomes partial.</td></tr>
+    <tr><td>At least as many microphones as sources</td><td>The problem can't be solved this way.</td></tr>
+    <tr><td>The sources are <b>independent</b></td><td>Two people reading the same script in sync won't separate well.</td></tr>
+    <tr><td>At most <b>one</b> source is bell-curve shaped (Gaussian)</td><td>Two Gaussian sources can't be told apart (proven in Experiment 6).</td></tr>
+    <tr><td>Little microphone noise</td><td>Noise is unmixed along with the sources, and amplified if the mix is nearly broken (Experiments 2–3).</td></tr>
+  </table>
+  <h2>Other honest limitations</h2>
+  <ul>
+    <li>Our sounds are synthetic (computer voices and generated music), so they are cleaner than real-life recordings.</li>
+    <li>Clips are 8 seconds long. Over such a short time the sources are never <i>perfectly</i> independent, which caps
+      the best possible score at around 40 dB.</li>
+    <li>Scores need the original sounds and don't measure how pleasant the result sounds to humans.</li>
+  </ul>
+  <h2>Ideas for the future</h2>
+  <ul>
+    <li><b>Frequency-domain ICA</b>: split the sound into many frequency bands and run ICA in each. This handles echoes in real rooms.</li>
+    <li>Separating <b>more sources than microphones</b> using other techniques (e.g. sparse methods or NMF).</li>
+    <li>Real multi-phone recordings with correction for clock drift between devices.</li>
+    <li>Perceptual quality scores that model human hearing.</li>
+    <li>Real-time (live microphone) separation.</li>
+  </ul>
+</section>
+
+<!-- ============================ 18 ============================ -->
+<section class="chapter newpage">
+  <div class="kicker">Chapter 18</div>
+  <h1><span class="num">18</span>Glossary</h1>
+  <dl class="glossary">
+    <dt>Amari index</dt><dd>A score for the unmixing table: 0 means it perfectly undoes the mixing.</dd>
+    <dt>Centering</dt><dd>Subtracting the average so a signal wobbles around zero.</dd>
+    <dt>Central Limit Theorem (CLT)</dt><dd>Adding independent things together makes the result look more like a bell curve.</dd>
+    <dt>Convergence</dt><dd>When repeating an algorithm stops changing the answer, so it has “settled”.</dd>
+    <dt>Correlation</dt><dd>How much two signals rise and fall together in a straight-line way (−1 to +1).</dd>
+    <dt>Covariance matrix</dt><dd>A table showing how much each pair of signals moves together.</dd>
+    <dt>Decibel (dB)</dt><dd>A “times ten” scale for comparing energies: +10 dB = 10× more.</dd>
+    <dt>Eigenvectors / eigenvalues</dt><dd>The main directions of spread in the data, and how much spread there is along each.</dd>
+    <dt>FastICA</dt><dd>A fast, popular algorithm for ICA that uses a few clever jumps (Newton steps) to find the best rotation.</dd>
+    <dt>Gaussian</dt><dd>The bell-curve shape. Random noise is Gaussian; speech and music are not.</dd>
+    <dt>Hungarian algorithm</dt><dd>A classic method for the best one-to-one pairing (e.g. workers to jobs).</dd>
+    <dt>ICA (Independent Component Analysis)</dt><dd>A method that recovers independent sources from their mixtures.</dd>
+    <dt>Independent</dt><dd>Knowing one signal tells you nothing at all about the other. Stronger than “uncorrelated”.</dd>
+    <dt>Kurtosis</dt><dd>A measure of “spikiness”. Excess kurtosis 0 = bell curve; speech is high.</dd>
+    <dt>Mixing matrix</dt><dd>The table of volumes saying how much of each source reaches each microphone.</dd>
+    <dt>Mono / stereo</dt><dd>One audio channel vs. two (left and right).</dd>
+    <dt>Non-Gaussianity / negentropy</dt><dd>How far a signal's shape is from a bell curve. ICA maximises it.</dd>
+    <dt>PCA (Principal Component Analysis)</dt><dd>Finds the directions of greatest spread; makes outputs uncorrelated but not independent.</dd>
+    <dt>Permutation</dt><dd>The order of things. ICA can't know the order of its outputs.</dd>
+    <dt>Sample rate</dt><dd>How many numbers per second describe a sound (e.g. 16 000 Hz).</dd>
+    <dt>SI-SDR</dt><dd>Scale-invariant signal-to-distortion ratio: how clean a recovered sound is, in dB, ignoring volume.</dd>
+    <dt>SNR (signal-to-noise ratio)</dt><dd>How loud the wanted signal is compared with the noise, in dB.</dd>
+    <dt>Spectrogram</dt><dd>A picture of a sound: time across, pitch up, brightness = loudness.</dd>
+    <dt>Whitening</dt><dd>Reshaping data so it is uncorrelated with equal spread in every direction (the round balloon).</dd>
+  </dl>
+  <div class="box ok" style="margin-top:6mm"><span class="t">✅ In one sentence</span>
+    UNMIX mixes clean sounds with a recipe we choose, then, using hand-written whitening and FastICA, finds the one
+    rotation that makes the outputs as un-bell-shaped as possible, recovering each sound at about 40 dB quality. We
+    checked it with 30 tests and 8 experiments, including the cases where it honestly fails.</div>
+</section>
+
+</body>
+</html>
